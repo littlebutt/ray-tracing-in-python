@@ -1,5 +1,6 @@
 import math
-from typing import Union
+import sys
+from typing import TextIO, Union
 
 
 __all__ = ['Vector3', 'Point3']
@@ -31,6 +32,13 @@ class Vector3:
             self.y + vector3.y,
             self.z + vector3.z
         )
+
+    def __iadd__(self, vector3: "Vector3") -> "Vector3":
+        return Vector3(
+            self.x + vector3.x,
+            self.y + vector3.y,
+            self.z + vector3.z
+        )
     
     def __sub__(self, vector3: "Vector3") -> "Vector3":
         return Vector3(
@@ -52,12 +60,12 @@ class Vector3:
                 self.y * other,
                 self.z * other
             )
-        
-    def __iadd__(self, vector3: "Vector3") -> "Vector3":
+    
+    def __rmul__(self, other: float) -> "Vector3":
         return Vector3(
-            self.x + vector3.x,
-            self.y + vector3.y,
-            self.z + vector3.z
+            self.x * other,
+            self.y * other,
+            self.z * other
         )
     
     def __imul__(self, other: float) -> "Vector3":
@@ -67,8 +75,26 @@ class Vector3:
             self.z * other
         )
     
+    def __div__(self, other: float) -> "Vector3":
+        return Vector3(
+            self.x / other,
+            self.y / other,
+            self.z / other
+        )
+    
     def __idiv__(self, other: float) -> "Vector3":
         return self.__imul__(1/other)
+    
+    def dot(self, vector3: "Vector3") -> float:
+        return self.x * vector3.x + self.y * vector3.y + self.z * vector3.z
+    
+    def cross(self, vector3: "Vector3") -> "Vector3":
+        return Vector3(self.y * vector3.z - self.z * vector3.y,
+                self.z * vector3.x - self.x * vector3.z,
+                self.x * vector3.y - self.y * vector3.x)
+    
+    def unit_vector(self) -> "Vector3":
+        return self / self.length()
     
     def length_squared(self) -> float:
         return self.x * self.x + self.y * self.y + self.z * self.z
@@ -81,3 +107,9 @@ class Vector3:
     
 
 Point3 = Vector3
+
+
+Color = Vector3
+
+def write_color(text_io: TextIO, pixel_color: Color) -> None:
+    text_io.write(f"{int(pixel_color.x * 255.999)} {int(pixel_color.y * 255.999)} {int(pixel_color.z * 255.999)}\n")
