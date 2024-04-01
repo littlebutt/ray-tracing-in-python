@@ -2,7 +2,7 @@ import math
 from typing import TextIO, Union
 
 
-__all__ = ['Vector3', 'Point3']
+__all__ = ['Vector3', 'Point3', 'write_color']
 
 
 class Vector3:
@@ -74,14 +74,14 @@ class Vector3:
             self.z * other
         )
     
-    def __div__(self, other: float) -> "Vector3":
+    def __truediv__(self, other: float) -> "Vector3":
         return Vector3(
             self.x / other,
             self.y / other,
             self.z / other
         )
     
-    def __idiv__(self, other: float) -> "Vector3":
+    def __itruediv__(self, other: float) -> "Vector3":
         return self.__imul__(1/other)
     
     def dot(self, vector3: "Vector3") -> float:
