@@ -4,9 +4,20 @@ from vec import Color, Point3, Vector3, write_color
 
 
 def ray_color(ray: "Ray") -> "Color":
+    if hit_sphere(Point3(0, 0, -5), 0.5, ray):
+        return Color(1, 0, 0)
     unit_direction = ray.direction().unit_vector()
     a = 0.5 * (unit_direction.y + 1.0)
     return (1.0 - a) * Color(1.0, 1.0, 1.0) + a * Color(0.5, 0.7, 1.0)
+
+
+def hit_sphere(center: "Point3", radius: float, ray: "Ray") -> bool:
+    oc = ray.origin() - center
+    a = r.direction().dot(r.direction())
+    b = 2.0 * oc.dot(r.direction())
+    c = oc.dot(oc) - radius * radius
+    discriminant = b * b - 4 * a * c
+    return discriminant >= 0
 
 
 if __name__ == '__main__':
