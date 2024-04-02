@@ -1,23 +1,31 @@
+from math import sqrt
 from sys import stdout
 from ray import Ray
 from vec import Color, Point3, Vector3, write_color
 
 
 def ray_color(ray: "Ray") -> "Color":
-    if hit_sphere(Point3(0, 0, -5), 0.5, ray):
-        return Color(1, 0, 0)
+    t = hit_sphere(Point3(0, 0, -1), 0.5, ray)
+    if t > 0:
+        n = (ray.at(t) - Vector3(0, 0, -1)).unit_vector()
+        return 0.5 * Color(n.x + 1, n.y + 1, n.z + 1)
     unit_direction = ray.direction().unit_vector()
     a = 0.5 * (unit_direction.y + 1.0)
     return (1.0 - a) * Color(1.0, 1.0, 1.0) + a * Color(0.5, 0.7, 1.0)
 
 
-def hit_sphere(center: "Point3", radius: float, ray: "Ray") -> bool:
+def hit_sphere(center: "Point3", radius: float, ray: "Ray") -> float:
     oc = ray.origin() - center
-    a = r.direction().dot(r.direction())
+    a = r.direction().length_squared()
+    half_b = oc.dot(ray.direction())
     b = 2.0 * oc.dot(r.direction())
-    c = oc.dot(oc) - radius * radius
-    discriminant = b * b - 4 * a * c
-    return discriminant >= 0
+    c = oc.length_squared() - radius * radius
+    discriminant = half_b * half_b - a * c
+    
+    if discriminant < 0:
+        return -1.0
+    else:
+        return (-half_b - sqrt(discriminant)) / a
 
 
 if __name__ == '__main__':
