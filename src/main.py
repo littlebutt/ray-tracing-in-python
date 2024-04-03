@@ -1,14 +1,26 @@
 from math import sqrt
 from sys import stdout
 from ray import Ray
+from sphere import Sphere
 from vec import Color, Point3, Vector3, write_color
+from world import World
 
 
-def ray_color(ray: "Ray") -> "Color":
-    t = hit_sphere(Point3(0, 0, -1), 0.5, ray)
-    if t > 0:
-        n = (ray.at(t) - Vector3(0, 0, -1)).unit_vector()
-        return 0.5 * Color(n.x + 1, n.y + 1, n.z + 1)
+INFINITY = float('inf')
+
+
+PI = 3.1415926535897932385
+
+
+def degrees_to_radians(degrees: float):
+    return degrees * PI / 180.0
+
+
+def ray_color(ray: "Ray", world: "World") -> "Color":
+    rec = None
+    hit, rec = world.hit(ray, 0, INFINITY)
+    if hit:
+        return 0.5 * (rec.normal + Color(1, 1, 1))
     unit_direction = ray.direction().unit_vector()
     a = 0.5 * (unit_direction.y + 1.0)
     return (1.0 - a) * Color(1.0, 1.0, 1.0) + a * Color(0.5, 0.7, 1.0)
@@ -35,6 +47,10 @@ if __name__ == '__main__':
     image_height = int(image_width / aspect_ratio)
     image_height = image_height if image_height > 1 else 1
 
+    world = World()
+    world.add(Sphere(Point3(0, 0, -1), 0.5))
+    world.add(Sphere(Point3(0, -0.5, -1), 0.5))
+
     focal_length = 1.0
     viewport_height = 2.0
     viewport_width = viewport_height * float(image_width / image_height)
@@ -57,5 +73,5 @@ if __name__ == '__main__':
             pixel_center = pixel00_loc + i * pixel_delta_u + j * pixel_delta_v
             ray_direction = pixel_center - camera_center
             r = Ray(camera_center, ray_direction)
-            pixel_color = ray_color(r)
+            pixel_color = ray_color(r, world)
             write_color(stdout, pixel_color)
