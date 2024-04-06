@@ -1,4 +1,5 @@
 from typing import Optional, Tuple
+from interval import Interval
 from ray import Ray
 from vec import Point3, Vector3
 
@@ -22,5 +23,5 @@ class HitRecord:
 
 class Hittable:
 
-    def hit(self, ray: "Ray", ray_tmin: float, ray_tmax: float) -> Tuple[bool, Optional["HitRecord"]]:
+    def hit(self, ray: "Ray", interval: "Interval") -> Tuple[bool, Optional["HitRecord"]]:
         pass

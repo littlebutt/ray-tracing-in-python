@@ -1,15 +1,11 @@
 from math import sqrt
 from sys import stdout
+from constants import INFINITY, PI
+from interval import Interval
 from ray import Ray
 from sphere import Sphere
 from vec import Color, Point3, Vector3, write_color
 from world import World
-
-
-INFINITY = float('inf')
-
-
-PI = 3.1415926535897932385
 
 
 def degrees_to_radians(degrees: float):
@@ -18,7 +14,7 @@ def degrees_to_radians(degrees: float):
 
 def ray_color(ray: "Ray", world: "World") -> "Color":
     rec = None
-    hit, rec = world.hit(ray, 0, INFINITY)
+    hit, rec = world.hit(ray, Interval(0, INFINITY))
     if hit:
         return 0.5 * (rec.normal + Color(1, 1, 1))
     unit_direction = ray.direction().unit_vector()

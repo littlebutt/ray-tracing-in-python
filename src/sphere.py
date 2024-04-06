@@ -1,6 +1,7 @@
 import math
 from typing import Optional, Tuple
 from hittable import HitRecord, Hittable
+from interval import Interval
 from ray import Ray
 from vec import Point3
 
@@ -11,7 +12,7 @@ class Sphere(Hittable):
         self.center = center
         self.radius = radius
     
-    def hit(self, ray: Ray, ray_tmin: float, ray_tmax: float) -> Tuple[bool, Optional[HitRecord]]:
+    def hit(self, ray: Ray, interval: "Interval") -> Tuple[bool, Optional[HitRecord]]:
         oc = ray.origin() - self.center
         a = ray.direction().length_squared()
         half_b = oc.dot(ray.direction())
@@ -23,9 +24,9 @@ class Sphere(Hittable):
         
         sqrtd = math.sqrt(discriminant)
         root = (-half_b - sqrtd) / a
-        if root <= ray_tmin or root >= ray_tmax:
+        if not interval.surrounds(root):
             root = (-half_b + sqrtd) / a
-            if root <= ray_tmin or root >= ray_tmax:
+            if not interval.surrounds(root):
                 return (False, None)
         
         rec = HitRecord()
