@@ -7,4 +7,4 @@ def degrees_to_radians(degrees: float):
 
 
 def random_float(min: float=0, max: float=1) -> float:
-    return random.uniform(min, max)
+    return min + random.random() * (max - min)

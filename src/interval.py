@@ -18,9 +18,9 @@ class Interval:
     
     def clamp(self, x: float) -> float:
         if x < self.min:
-            return min
+            return self.min
         elif x > self.max:
-            return max
+            return self.max
         else:
             return x
 

@@ -1,6 +1,8 @@
 import math
 from typing import TextIO, Union
 
+from interval import Interval
+
 
 __all__ = ['Vector3', 'Point3', 'write_color']
 
@@ -111,4 +113,11 @@ Point3 = Vector3
 Color = Vector3
 
 def write_color(text_io: TextIO, pixel_color: Color) -> None:
-    text_io.write(f"{int(pixel_color.x * 255.999)} {int(pixel_color.y * 255.999)} {int(pixel_color.z * 255.999)}\n")
+    r = pixel_color.x
+    g = pixel_color.y
+    b = pixel_color.z
+    intensity = Interval(0.000, 0.999)
+    rbyte = int(256 * intensity.clamp(r))
+    gbyte = int(256 * intensity.clamp(g))
+    bbyte = int(256 * intensity.clamp(b))
+    text_io.write(f"{rbyte} {gbyte} {bbyte}\n")
