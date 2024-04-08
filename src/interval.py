@@ -15,6 +15,15 @@ class Interval:
     
     def surrounds(self, x: float) -> bool:
         return x > self.min and x < self.max
+    
+    def clamp(self, x: float) -> float:
+        if x < self.min:
+            return min
+        elif x > self.max:
+            return max
+        else:
+            return x
+
 
 EMPTY = Interval(+INFINITY, -INFINITY)
 UNIVERSE = Interval(-INFINITY, +INFINITY)
