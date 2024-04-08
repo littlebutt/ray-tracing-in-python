@@ -1,9 +1,9 @@
-from sys import stdout
+from typing import TextIO
 from constants import INFINITY
 from interval import Interval
 from ray import Ray
-from utils import random_float
-from vec import Color, Point3, Vector3, write_color
+from utils import random_float, write_color
+from vec import Color, Point3, Vector3
 from world import World
 
 
@@ -30,16 +30,19 @@ class Camera:
         self.image_width = image_width
         self.samples_per_pixel = samples_per_pixel
     
-    def render(self, world: "World"):
+    def render(self, world: "World", out: TextIO):
         self._initialize()
-        stdout.write(f"P3\n{self.image_width} {self.image_height}\n255\n")
+        print(f"Start to render the image. The total batch number is {self.image_height * self.image_width}")
+        out.write(f"P3\n{self.image_width} {self.image_height}\n255\n")
         for j in range(self.image_height):
             for i in range(self.image_width):
                 pixel_color = Color(0, 0, 0)
+                print(f"Rendering the {i + j * self.image_height}/{self.image_height * self.image_width} batch")
                 for sample in range(0, self.samples_per_pixel):
                     r = self._get_ray(i, j)
                     pixel_color += self._ray_color(r, world)
-                write_color(stdout, self.pixel_samples_scale  * pixel_color)
+                write_color(out, self.pixel_samples_scale  * pixel_color)
+        out.flush()
     
     def _get_ray(self, i: int, j: int) -> "Ray":
         offset = self._sample_square()
