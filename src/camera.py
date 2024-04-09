@@ -2,7 +2,7 @@ from typing import TextIO
 from constants import INFINITY
 from interval import Interval
 from ray import Ray
-from utils import random_float, write_color
+from utils import random_float, random_unit_vector, write_color
 from vec import Color, Point3, Vector3
 from world import World
 
@@ -22,13 +22,15 @@ class Camera:
         pixel_delta_v: Offset to pixel below.
         samples_per_pixel: Count of random samples for each pixel.
         pixel_samples_scale: Color scale factor for a sum of pixel samples.
+        max_depth: Maximum number of ray bounces into scene
 
     '''
 
-    def __init__(self, aspect_ratio: float=1.0, image_width: float=100, samples_per_pixel: float=10) -> None:
+    def __init__(self, aspect_ratio: float=1.0, image_width: float=100, samples_per_pixel: float=10, max_depth: int=10) -> None:
         self.aspect_ratio = aspect_ratio
         self.image_width = image_width
         self.samples_per_pixel = samples_per_pixel
+        self.max_depth = max_depth
     
     def render(self, world: "World", out: TextIO):
         self._initialize()
@@ -40,7 +42,7 @@ class Camera:
                 print(f"Rendering the {i + j * self.image_height}/{self.image_height * self.image_width} batch")
                 for sample in range(0, self.samples_per_pixel):
                     r = self._get_ray(i, j)
-                    pixel_color += self._ray_color(r, world)
+                    pixel_color += self._ray_color(r, self.max_depth, world)
                 write_color(out, self.pixel_samples_scale  * pixel_color)
         out.flush()
     
@@ -76,11 +78,14 @@ class Camera:
 
         self.pixel_samples_scale = 1.0 / self.samples_per_pixel
 
-    def _ray_color(self, ray: "Ray", world: "World") -> "Color":
+    def _ray_color(self, ray: "Ray", depth: int, world: "World") -> "Color":
+        if depth <= 0:
+            return Color(0, 0, 0)
         rec = None
-        hit, rec = world.hit(ray, Interval(0, INFINITY))
+        hit, rec = world.hit(ray, Interval(0.001, INFINITY))
         if hit:
-            return 0.5 * (rec.normal + Color(1, 1, 1))
+            direction = rec.normal + random_unit_vector()
+            return 0.1 * self._ray_color(Ray(rec.p, direction), depth - 1, world)
         unit_direction = ray.direction().unit_vector()
         a = 0.5 * (unit_direction.y + 1.0)
         return (1.0 - a) * Color(1.0, 1.0, 1.0) + a * Color(0.5, 0.7, 1.0)

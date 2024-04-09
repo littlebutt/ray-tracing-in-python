@@ -15,7 +15,7 @@ if __name__ == '__main__':
     world.add(Sphere(Point3(0, 0, -1), 0.5))
     world.add(Sphere(Point3(0, -0.5, -1), 0.5))
 
-    cam = Camera(aspect_ratio, image_width, samples_per_pixel)
+    cam = Camera(aspect_ratio, image_width, samples_per_pixel, 50)
     cam.render(world, open("output.ppm", "w"))
 
     
