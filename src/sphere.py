@@ -2,15 +2,20 @@ import math
 from typing import Optional, Tuple
 from hittable import HitRecord, Hittable
 from interval import Interval
+from material import Material
 from ray import Ray
 from vec import Point3
 
 
+__all__ = ['Sphere']
+
+
 class Sphere(Hittable):
 
-    def __init__(self, center: "Point3", radius: float) -> None:
+    def __init__(self, center: "Point3", radius: float, mat: "Material"=Material()) -> None:
         self.center = center
         self.radius = radius
+        self.mat = mat
     
     def hit(self, ray: Ray, interval: "Interval") -> Tuple[bool, Optional[HitRecord]]:
         oc = ray.origin() - self.center
@@ -34,5 +39,6 @@ class Sphere(Hittable):
         rec.p = ray.at(rec.t)
         outward_normal = (rec.p - self.center) / self.radius
         rec.set_face_normal(ray=ray, outward_normal=outward_normal)
+        rec.mat = self.mat
 
         return (True, rec)

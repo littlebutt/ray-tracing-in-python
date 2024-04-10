@@ -2,9 +2,12 @@ from typing import TextIO
 from constants import INFINITY
 from interval import Interval
 from ray import Ray
-from utils import random_float, random_unit_vector, write_color
+from utils import random_float, write_color
 from vec import Color, Point3, Vector3
 from world import World
+
+
+__all__ = ['Camera']
 
 
 class Camera:
@@ -84,8 +87,10 @@ class Camera:
         rec = None
         hit, rec = world.hit(ray, Interval(0.001, INFINITY))
         if hit:
-            direction = rec.normal + random_unit_vector()
-            return 0.1 * self._ray_color(Ray(rec.p, direction), depth - 1, world)
+            res, attenuation, scattered = rec.mat.scatter(ray, rec)
+            if res:
+                return attenuation * self._ray_color(scattered, depth - 1, world)
+            return Color(0, 0, 0)
         unit_direction = ray.direction().unit_vector()
         a = 0.5 * (unit_direction.y + 1.0)
         return (1.0 - a) * Color(1.0, 1.0, 1.0) + a * Color(0.5, 0.7, 1.0)

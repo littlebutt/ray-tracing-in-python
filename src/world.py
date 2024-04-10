@@ -4,6 +4,9 @@ from interval import Interval
 from ray import Ray
 
 
+__all__ = ['World']
+
+
 class World(Hittable):
 
     def __init__(self) -> None:
