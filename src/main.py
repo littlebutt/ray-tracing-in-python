@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     material_ground = Lambertian(Color(0.8, 0.8, 0.0))
     material_center = Lambertian(Color(0.1, 0.2, 0.5))
-    material_left = Metal(Color(0.8, 0.8, 0.8))
+    material_left = Metal(Color(0.8, 0.8, 0.8), 0.3)
     material_right = Metal(Color(0.8, 0.6, 0.2))
     
     world = World()

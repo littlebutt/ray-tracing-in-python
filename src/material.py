@@ -28,12 +28,15 @@ class Lambertian(Material):
 
 class Metal(Material):
 
-    def __init__(self, albedo: "Color") -> None:
+    def __init__(self, albedo: "Color", fuzz: float = 0) -> None:
         self.albedo = albedo
+        self.fuzz = fuzz if fuzz < 1 else 1
 
     def scatter(self, r_in: Ray, rec: HitRecord) -> Tuple[bool | Color | Ray]:
         reflected = self._reflect(r_in.direction(), rec.normal)
-        return True, self.albedo, Ray(rec.p, reflected)
+        reflected = reflected.unit_vector() + self.fuzz * random_unit_vector()
+        scattered = Ray(rec.p, reflected)
+        return scattered.direction().dot(rec.normal) > 0, self.albedo, scattered
     
     def _reflect(self, v: "Vector3", n: "Vector3") -> "Vector3":
         return v - 2 * v.dot(n) * n
