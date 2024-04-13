@@ -1,8 +1,9 @@
+from math import tan
 from typing import TextIO
 from constants import INFINITY
 from interval import Interval
 from ray import Ray
-from utils import random_float, write_color
+from utils import degrees_to_radians, random_float, write_color
 from vec import Color, Point3, Vector3
 from world import World
 
@@ -25,15 +26,26 @@ class Camera:
         pixel_delta_v: Offset to pixel below.
         samples_per_pixel: Count of random samples for each pixel.
         pixel_samples_scale: Color scale factor for a sum of pixel samples.
-        max_depth: Maximum number of ray bounces into scene
+        max_depth: Maximum number of ray bounces into scene.
+        vfov: Vertical view angle (field of view).
+        look_from: Point camera is looking from.
+        look_at: Point camera is looking at.
+        vup: Camera-relative "up" direction.
+
 
     '''
 
-    def __init__(self, aspect_ratio: float=1.0, image_width: float=100, samples_per_pixel: float=10, max_depth: int=10) -> None:
+    def __init__(self, aspect_ratio: float=1.0, image_width: float=100, 
+                 samples_per_pixel: float=10, max_depth: int=10, 
+                 vfov: float=90, look_from: "Point3"=Point3(0, 0, 0), look_at: "Point3"=Point3(0, 0, -1), vup: "Vector3"=Vector3(0, 1, 0)) -> None:
         self.aspect_ratio = aspect_ratio
         self.image_width = image_width
         self.samples_per_pixel = samples_per_pixel
         self.max_depth = max_depth
+        self.vfov = vfov
+        self.look_from = look_from
+        self.look_at = look_at
+        self.vup = vup
     
     def render(self, world: "World", out: TextIO):
         self._initialize()
@@ -63,19 +75,25 @@ class Camera:
         self.image_height = int(self.image_width / self.aspect_ratio)
         self.image_height = self.image_height if self.image_height > 1 else 1
 
-        self.focal_length = 1.0
-        self.viewport_height = 2.0
+        self.focal_length = (self.look_from - self.look_at).length()
+        theta = degrees_to_radians(self.vfov)
+        h = tan(theta / 2)
+        self.viewport_height = 2.0 * h * self.focal_length
         self.viewport_width = self.viewport_height * float(self.image_width / self.image_height)
 
-        self.center = Point3(0, 0, 0)
+        self.center = self.look_from
 
-        self.viewport_u = Vector3(self.viewport_width, 0, 0)
-        self.viewport_v = Vector3(0, -self.viewport_height, 0)
+        w = (self.look_from - self.look_at).unit_vector()
+        u = self.vup.cross(w).unit_vector()
+        v = w.cross(u)
+
+        self.viewport_u = self.viewport_width * u
+        self.viewport_v = self.viewport_height * -v
 
         self.pixel_delta_u = self.viewport_u / self.image_width
         self.pixel_delta_v = self.viewport_v / self.image_height
 
-        self.viewport_upper_left = self.center - Vector3(0, 0, self.focal_length) - self.viewport_u / 2 - self.viewport_v / 2
+        self.viewport_upper_left = self.center - self.focal_length * w - self.viewport_u / 2 - self.viewport_v / 2
 
         self.pixel00_loc = self.viewport_upper_left + 0.5 * (self.pixel_delta_u + self.pixel_delta_v)
 

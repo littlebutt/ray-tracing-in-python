@@ -1,7 +1,7 @@
 from camera import Camera
 from material import Dielectric, Lambertian, Metal
 from sphere import Sphere
-from vec import Color, Point3
+from vec import Color, Point3, Vector3
 from world import World
 
 
@@ -23,7 +23,7 @@ if __name__ == '__main__':
     world.add(Sphere(Point3(-1.0, 0.0, -1.2), 0.5, material_left))
     world.add(Sphere(Point3(1.0, 0.0, -1.2), 0.5, material_right))
 
-    cam = Camera(aspect_ratio, image_width, samples_per_pixel, 50)
+    cam = Camera(aspect_ratio, image_width, samples_per_pixel, 50, 20, Point3(-2, 2, 1), Point3(0, 0, -1), Vector3(0, 1, 0))
     cam.render(world, open("output.ppm", "w"))
 
     

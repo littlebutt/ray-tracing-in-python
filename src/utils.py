@@ -6,6 +6,10 @@ from interval import Interval
 from vec import Color, Vector3
 
 
+def degrees_to_radians(degrees: float):
+    return degrees * PI / 180.0
+
+
 def random_float(min: float=0, max: float=1) -> float:
     return min + random.random() * (max - min)
 
