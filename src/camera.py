@@ -48,6 +48,15 @@ class Camera:
         self.vup = vup
     
     def render(self, world: "World", out: TextIO):
+        '''
+        Render the image of the ray tracing model.
+        The result of the rendering process is a ``.ppm`` image from the output
+        stream.
+
+        Arguments:
+            world: The hittable objects for rendering.
+            out: The :type:`TextIO` output stream.
+        '''
         self._initialize()
         print(f"Start to render the image. The total batch number is {self.image_height * self.image_width}")
         out.write(f"P3\n{self.image_width} {self.image_height}\n255\n")
