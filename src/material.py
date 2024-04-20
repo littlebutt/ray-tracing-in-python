@@ -10,8 +10,25 @@ __all__ = ['Material', 'Lambertian', 'Metal', 'Dielectric']
 
 
 class Material:
+    '''
+    A Class for material attributes.
+
+    '''
 
     def scatter(self, r_in: "Ray", rec: "HitRecord") -> Tuple[bool, "Color", "Ray"]:
+        '''
+        Scattering the :class:`Ray` according to its material attributes.
+
+        Args:
+            r_in: The :class:`Ray`.
+            rec: The :class:`HitRecord` of the hit point.
+        
+        Returns:
+            bool: If the ray can scatter color, otherwise scatter 
+                ``Color(0, 0, 0)``.
+            Color: The color of the scattered ray.
+            Ray: The scattered ray.
+        '''
         return False
     
     def _reflect(self, v: "Vector3", n: "Vector3") -> "Vector3":
