@@ -8,6 +8,11 @@ __all__ = ['World']
 
 
 class World(Hittable):
+    '''
+    A class for rendering the world.
+    It is merely a list of :class:`Hittable`s.
+
+    '''
 
     def __init__(self) -> None:
         self.objects: List["Hittable"] = list()
@@ -19,6 +24,7 @@ class World(Hittable):
         self.objects.clear()
     
     def hit(self, ray: Ray, interval: "Interval") -> Tuple[bool, HitRecord | None]:
+        '''Detect if the objects in the world are hittable respectively.'''
         hit_anything = False
         return_rec = None
         closest_so_far = interval.max
