@@ -21,20 +21,21 @@ class Sphere(Hittable):
 
     '''
 
-    def __init__(self, center: "Point3", radius: float, mat: "Material"=Material(), 
-                 is_moving: bool=False, center2: Optional["Point3"]=None) -> None:
-        self.center = center
+    def __init__(self, center1: "Point3", radius: float, mat: "Material"=Material(), 
+                center2: Optional["Point3"]=None) -> None:
+        self.center1 = center1
         self.radius = radius
         self.mat = mat
-        self.is_moving = is_moving
-        if is_moving:
-            assert center2 is not None
-            self.center_vec = center2 - center
+        if center2 is not None:
+            self.is_moving = True
+            self.center_vec = center2 - center1
+        else:
+            self.is_moving = False
     
     def sphere_center(self, time: float) -> "Point3":
         # Linearly interpolate from center to center2 according to time, where 
         # t=0 yields center, and t=1 yields center2.
-        return self.center + time * self.center_vec
+        return self.center1 + time * self.center_vec
     
     def hit(self, ray: Ray, interval: "Interval") -> Tuple[bool, Optional[HitRecord]]:
         '''
@@ -50,7 +51,7 @@ class Sphere(Hittable):
                 the ray can hit the sphere.
         
         '''
-        self.center = self.sphere_center(ray.time()) if self.is_moving else self.center
+        self.center = self.sphere_center(ray.time()) if self.is_moving else self.center1
         oc = ray.origin() - self.center
         a = ray.direction().length_squared()
         half_b = oc.dot(ray.direction())
