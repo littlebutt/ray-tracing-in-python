@@ -1,3 +1,4 @@
+import functools
 from random import randint
 from typing import List, Optional, Tuple
 from aabb import AABB
@@ -27,8 +28,8 @@ class BVHNode(Hittable):
             self.left = objects[start]
             self.right = objects[start + 1]
         else:
-            sorted(objects[start: end], cmp=comparator)
-            mid = start + object_span / 2
+            objects = sorted(objects, key=functools.cmp_to_key(comparator))
+            mid = int(start + object_span / 2)
             self.left = BVHNode(objects, start, mid)
             self.right = BVHNode(objects, mid, end)
 
@@ -38,19 +39,19 @@ class BVHNode(Hittable):
     def box_x_compare(a: "Hittable", b: "Hittable") -> bool:
         a_axis_interval = a.bounding_box().axis_interval(0)
         b_axis_interval = b.bounding_box().axis_interval(0)
-        return a_axis_interval.min < b_axis_interval.min
+        return a_axis_interval.min - b_axis_interval.min
     
     @staticmethod
     def box_y_compare(a: "Hittable", b: "Hittable") -> bool:
         a_axis_interval = a.bounding_box().axis_interval(1)
         b_axis_interval = b.bounding_box().axis_interval(1)
-        return a_axis_interval.min < b_axis_interval.min
+        return a_axis_interval.min - b_axis_interval.min
     
     @staticmethod
     def box_z_compare(a: "Hittable", b: "Hittable") -> bool:
         a_axis_interval = a.bounding_box().axis_interval(2)
         b_axis_interval = b.bounding_box().axis_interval(2)
-        return a_axis_interval.min < b_axis_interval.min
+        return a_axis_interval.min - b_axis_interval.min
 
     def hit(self, ray: Ray, interval: Interval) -> Tuple[bool, Optional["HitRecord"]]:
         if not self.bbox.hit(ray, interval):
@@ -58,7 +59,7 @@ class BVHNode(Hittable):
         hit_left, rec_left = self.left.hit(ray, interval)
         hit_right, rec_right = self.right.hit(ray, Interval(interval.min, rec_left.t if hit_left else interval.max))
         hit = hit_left or hit_right
-        rec = rec_left if hit_left else rec_right
+        rec = rec_right if rec_right is not None else rec_left
         return hit, rec
     
     def bounding_box(self) -> "AABB":
