@@ -1,10 +1,11 @@
 import math
 from typing import Optional, Tuple
+from aabb import AABB
 from hittable import HitRecord, Hittable
 from interval import Interval
 from material import Material
 from ray import Ray
-from vec import Point3
+from vec import Point3, Vector3
 
 
 __all__ = ['Sphere']
@@ -26,11 +27,18 @@ class Sphere(Hittable):
         self.center1 = center1
         self.radius = radius
         self.mat = mat
+
+        rvec = Vector3(radius, radius, radius)
+
         if center2 is not None:
             self.is_moving = True
             self.center_vec = center2 - center1
+            aabb1 = AABB(a=center1 - rvec, b=center1 + rvec)
+            aabb2 = AABB(a=center2 - rvec, b=center2 + rvec)
+            self.bbox = AABB(box0=aabb1, box1=aabb2)
         else:
             self.is_moving = False
+            self.bbox = AABB(a=center1 - rvec, b=center1 + rvec)
     
     def sphere_center(self, time: float) -> "Point3":
         # Linearly interpolate from center to center2 according to time, where 
@@ -76,3 +84,6 @@ class Sphere(Hittable):
         rec.mat = self.mat
 
         return (True, rec)
+    
+    def bounding_box(self) -> AABB:
+        return self.bbox

@@ -1,4 +1,5 @@
 from typing import Any, Optional, Tuple
+from aabb import AABB
 from interval import Interval
 from ray import Ray
 from vec import Point3, Vector3
@@ -52,4 +53,7 @@ class Hittable:
             HitRecord: The :class:`HitRecord` of the hit point if hittable.
 
         '''
+        pass
+
+    def bounding_box(self) -> "AABB":
         pass
