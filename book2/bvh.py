@@ -28,10 +28,10 @@ class BVHNode(Hittable):
             self.left = objects[start]
             self.right = objects[start + 1]
         else:
-            objects = sorted(objects, key=functools.cmp_to_key(comparator))
+            objects[start:end].sort(key=functools.cmp_to_key(comparator))
             mid = int(start + object_span / 2)
-            self.left = BVHNode(objects, start, mid)
-            self.right = BVHNode(objects, mid, end)
+            self.left = BVHNode(objects=objects, start=start, end=mid)
+            self.right = BVHNode(objects=objects, start=mid, end=end)
 
         self.bbox = AABB(box0=self.left.bounding_box(), box1=self.right.bounding_box())
     
@@ -57,8 +57,9 @@ class BVHNode(Hittable):
         if not self.bbox.hit(ray, interval):
             return False, None
         hit_left, rec_left = self.left.hit(ray, interval)
-        hit_right, rec_right = self.right.hit(ray, Interval(interval.min, rec_left.t if hit_left else interval.max))
+        hit_right, rec_right = self.right.hit(ray, Interval(interval.min, rec_left.t if rec_left is not None else interval.max))
         hit = hit_left or hit_right
+        # FIXME: rearrange here
         rec = rec_right if rec_right is not None else rec_left
         return hit, rec
     

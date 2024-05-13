@@ -56,12 +56,14 @@ if __name__ == '__main__':
     world = World()
     world.add(Sphere(Point3(0.0, -100.5, -1.0), 100.0, material_ground))
     center = Point3(0.0, 0.0, -1.2) + Vector3(0, random_float(0, 0.1), 0)
-    world.add(Sphere(Point3(0.0, 0.0, -1.2), 0.5, material_center, center))
-    world.add(Sphere(Point3(1.0, 0.0, -1.2), 0.5, material_right))
+    world.add(Sphere(Point3(0.0, 0.001, -1.2), 0.5, material_center, center))
+    world.add(Sphere(Point3(1.0, 0.002, -1.2), 0.7, material_right))
+    world.add(Sphere(Point3(1.0, 0.003, -1.2), 0.5, material_right))
+    world.add(Sphere(Point3(1.0, 0.004, -2.0), 0.5, material_right))
 
     world = World(BVHNode(world=world))
 
     cam = Camera(aspect_ratio, image_width, samples_per_pixel, 50, 20, Point3(-2, 2, 1), Point3(0, 0, -1), Vector3(0, 1, 0))
-    cam.render(world, open("output.ppm", "w"))
+    cam.render(world, open("output2.ppm", "w"))
 
     
