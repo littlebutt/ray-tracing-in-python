@@ -10,8 +10,8 @@ class Interval:
     Util class for detecting the relation between the target and two :type:`int`.
 
     Attributes:
-        min: The minimum int.
-        max: The maximum int.
+        min: The minimum float.
+        max: The maximum float.
 
     '''
 
@@ -24,6 +24,9 @@ class Interval:
         if a is not None and b is not None:
             self.min = a.min if a.min < b.min else b.min
             self.max = a.max if a.max > b.max else b.max
+    
+    def size(self) -> float:
+        return self.max - self.min
     
     def contains(self, x: float) -> bool:
         '''

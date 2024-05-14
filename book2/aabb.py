@@ -66,4 +66,10 @@ class AABB:
                 return False
         
         return True
+    
+    def longest_axis(self) -> int:
+        if self.x.size() > self.y.size():
+            return 0 if self.x.size() > self.z.size() else 2
+        else:
+            return 1 if self.y.size() > self.z.size() else 2
             

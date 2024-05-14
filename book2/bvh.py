@@ -1,10 +1,9 @@
 import functools
-from random import randint
 from typing import List, Optional, Tuple
 from aabb import AABB
 from world import World
 from hittable import HitRecord
-from interval import Interval
+from interval import EMPTY, Interval
 from ray import Ray
 from hittable import Hittable
 
@@ -17,8 +16,12 @@ class BVHNode(Hittable):
             objects = world.objects
             start = 0
             end = len(objects)
-
-        axis = randint(0, 2)
+        
+        self.bbox = AABB(x=EMPTY, y=EMPTY, z=EMPTY)
+        for object_index in range(start, end):
+            self.bbox = AABB(box0=self.bbox, box1=objects[object_index].bounding_box())
+        
+        axis = self.bbox.longest_axis()
         comparator = self.box_x_compare if axis == 0 else self.box_y_compare if axis == 1 else self.box_z_compare
         object_span = end - start
         if object_span == 1:
@@ -32,8 +35,6 @@ class BVHNode(Hittable):
             mid = int(start + object_span / 2)
             self.left = BVHNode(objects=objects, start=start, end=mid)
             self.right = BVHNode(objects=objects, start=mid, end=end)
-
-        self.bbox = AABB(box0=self.left.bounding_box(), box1=self.right.bounding_box())
     
     @staticmethod
     def box_x_compare(a: "Hittable", b: "Hittable") -> bool:

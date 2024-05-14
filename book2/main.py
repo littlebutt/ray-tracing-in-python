@@ -8,41 +8,6 @@ from world import World
 
 
 if __name__ == '__main__':
-    # aspect_ratio = 16.0 / 9.0
-
-    # image_width = 400
-
-    # samples_per_pixel = 100
-
-    # world = World()
-    # material_ground = Lambertian(Color(0.5, 0.5, 0.5))  
-    # world.add(Sphere(Point3(0.0, -1000, 0), 1000, material_ground))
-
-    # for a in range(-3, 3):
-    #     for b in range(-3, 3):
-    #         choose_mat = random_float()
-    #         center = Point3(a + 0.9 * random_float(), 0.2, b + 0.9 * random_float())
-
-    #         if (center - Point3(4, 0.2, 0)).length() > 0.9:
-    #             if choose_mat < 1:
-    #                 albedo = random_vector() * random_vector()
-    #                 material = Lambertian(albedo)
-    #                 center2 = center + Vector3(0, 0.5, 0)
-    #                 world.add(Sphere(center, 0.2, material, True, center2))
-                # elif choose_mat < 0.95:
-                #     albedo = random_vector(0.5, 1)
-                #     fuzz = random_float(0, 0.5)
-                #     material = Metal(albedo, fuzz)
-                #     world.add(Sphere(center, 0.2, material))
-                # else:
-                #     material = Dielectric(0.5)
-                #     world.add(Sphere(center, 0.2, material))
-
-
-    # cam = Camera(aspect_ratio=aspect_ratio, image_width=image_width, samples_per_pixel=samples_per_pixel, 
-    #              max_depth=50, vfov=20, 
-    #              look_from=Point3(13, 2, 3), look_at=Point3(0, 0, 0), vup=Vector3(0, 1, 0))
-    # cam.render(world, open("output.ppm", "w"))
     aspect_ratio = 16.0 / 9.0
 
     image_width = 400
@@ -59,9 +24,9 @@ if __name__ == '__main__':
     world.add(Sphere(Point3(0.0, -100.5, -1.0), 100.0, material_ground))
     center = Point3(0.0, 0.0, -1.2) + Vector3(0, random_float(0, 0.1), 0)
     world.add(Sphere(Point3(0.0, 0.001, -1.2), 0.5, material_center, center))
-    world.add(Sphere(Point3(1.0, 0.002, -1.2), 0.7, material_red))
-    world.add(Sphere(Point3(-1.0, 0.003, -1.2), 0.5, material_green))
-    world.add(Sphere(Point3(1.0, 0.004, -1.2), 0.5, material_yellow))
+    # world.add(Sphere(Point3(1.0, 0.002, -1.2), 0.7, material_red))
+    # world.add(Sphere(Point3(-1.0, 0.003, -1.2), 0.5, material_green))
+    # world.add(Sphere(Point3(1.0, 0.004, -1.2), 0.5, material_yellow))
 
     world = World(BVHNode(world=world))
 
