@@ -1,4 +1,5 @@
 from typing import List, Tuple
+from aabb import AABB
 from hittable import HitRecord, Hittable
 from interval import Interval
 from ray import Ray
@@ -14,11 +15,18 @@ class World(Hittable):
 
     '''
 
-    def __init__(self) -> None:
+    def __init__(self, object: "Hittable"=None) -> None:
         self.objects: List["Hittable"] = list()
+        self.bbox = None
+        if object is not None:
+            self.add(object)
     
     def add(self, obj: "Hittable") -> None:
         self.objects.append(obj)
+        if self.bbox is None:
+            self.bbox = obj.bounding_box()
+        else:
+            self.bbox = AABB(box0=self.bbox, box1=obj.bounding_box())
     
     def clear(self) -> None:
         self.objects.clear()
@@ -37,4 +45,7 @@ class World(Hittable):
                 return_rec = rec
         
         return (hit_anything, return_rec)
+    
+    def bounding_box(self) -> AABB:
+        return self.bbox
 

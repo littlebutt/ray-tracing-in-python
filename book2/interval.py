@@ -1,3 +1,4 @@
+from typing import Optional
 from constants import INFINITY
 
 
@@ -14,9 +15,15 @@ class Interval:
 
     '''
 
-    def __init__(self, min: float=-INFINITY, max: float=INFINITY) -> None:
+    def __init__(self, min: float=-INFINITY, max: float=INFINITY, 
+                 a: Optional["Interval"]=None, b: Optional["Interval"]=None) -> None:
         self.min = min
         self.max = max
+        # NOTE: `a` and `b` will cover the `min` and `max` if both 
+        # assigned. Use dict parameters if you want to pass to `a` and `b`.
+        if a is not None and b is not None:
+            self.min = a.min if a.min < b.min else b.min
+            self.max = a.max if a.max > b.max else b.max
     
     def contains(self, x: float) -> bool:
         '''
@@ -52,6 +59,10 @@ class Interval:
             return self.max
         else:
             return x
+    
+    def expand(self, delta: float) -> "Interval":
+        padding = delta / 2
+        return Interval(self.min - padding, self.max + padding)
 
 
 EMPTY = Interval(+INFINITY, -INFINITY)
