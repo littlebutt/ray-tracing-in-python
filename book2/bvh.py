@@ -28,7 +28,7 @@ class BVHNode(Hittable):
             self.left = objects[start]
             self.right = objects[start + 1]
         else:
-            objects[start:end].sort(key=functools.cmp_to_key(comparator))
+            objects[start:end] = sorted(objects[start:end], key=functools.cmp_to_key(comparator))
             mid = int(start + object_span / 2)
             self.left = BVHNode(objects=objects, start=start, end=mid)
             self.right = BVHNode(objects=objects, start=mid, end=end)
@@ -57,11 +57,18 @@ class BVHNode(Hittable):
         if not self.bbox.hit(ray, interval):
             return False, None
         hit_left, rec_left = self.left.hit(ray, interval)
-        hit_right, rec_right = self.right.hit(ray, Interval(interval.min, rec_left.t if rec_left is not None else interval.max))
-        hit = hit_left or hit_right
-        # FIXME: rearrange here
-        rec = rec_right if rec_right is not None else rec_left
-        return hit, rec
+        hit_right, rec_right = self.right.hit(ray, interval)
+        if hit_left and hit_right:
+            if rec_left.t < rec_right.t:
+                return True, rec_left
+            else:
+                return True, rec_right
+        elif hit_left:
+            return True, rec_left
+        elif hit_right:
+            return True, rec_right
+        else:
+            return False, None
     
     def bounding_box(self) -> "AABB":
         return self.bbox

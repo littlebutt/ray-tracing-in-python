@@ -49,17 +49,19 @@ if __name__ == '__main__':
 
     samples_per_pixel = 100
 
-    material_ground = Lambertian(Color(0.8, 0.8, 0.0))
+    material_ground = Lambertian(Color(0.2, 0.8, 0.8))
     material_center = Lambertian(Color(0.1, 0.2, 0.5))
-    material_right = Metal(Color(0.8, 0.6, 0.2))
+    material_red = Lambertian(Color(0.8, 0.2, 0.2))
+    material_green = Lambertian(Color(0.2, 0.8, 0.2))
+    material_yellow = Lambertian(Color(0.8, 0.8, 0.2))
     
     world = World()
     world.add(Sphere(Point3(0.0, -100.5, -1.0), 100.0, material_ground))
     center = Point3(0.0, 0.0, -1.2) + Vector3(0, random_float(0, 0.1), 0)
     world.add(Sphere(Point3(0.0, 0.001, -1.2), 0.5, material_center, center))
-    world.add(Sphere(Point3(1.0, 0.002, -1.2), 0.7, material_right))
-    world.add(Sphere(Point3(1.0, 0.003, -1.2), 0.5, material_right))
-    world.add(Sphere(Point3(1.0, 0.004, -2.0), 0.5, material_right))
+    world.add(Sphere(Point3(1.0, 0.002, -1.2), 0.7, material_red))
+    world.add(Sphere(Point3(-1.0, 0.003, -1.2), 0.5, material_green))
+    world.add(Sphere(Point3(1.0, 0.004, -1.2), 0.5, material_yellow))
 
     world = World(BVHNode(world=world))
 
