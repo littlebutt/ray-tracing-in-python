@@ -29,6 +29,8 @@ class HitRecord:
         self.t = t
         self.front_face = front_face
         self.mat = mat
+        self.u = 0
+        self.v = 0
     
     def set_face_normal(self, ray: "Ray", outward_normal: "Vector3") -> None:
         '''Set the front face of the hit point.'''

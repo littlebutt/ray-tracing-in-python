@@ -1,5 +1,6 @@
 from math import sqrt
 from typing import Tuple
+from tex import SolidColor, Texture
 from hittable import HitRecord
 from ray import Ray
 from utils import near_zero, random_float, random_unit_vector
@@ -37,14 +38,17 @@ class Material:
 
 class Lambertian(Material):
 
-    def __init__(self, albedo: "Color") -> None:
-        self.albedo = albedo
+    def __init__(self, albedo: "Color"=None, texture: "Texture"=None) -> None:
+        if albedo is not None:
+            self.tex = SolidColor(albedo=albedo)
+        elif texture is not None:
+            self.tex = texture
 
     def scatter(self, r_in: Ray, rec: HitRecord) -> Tuple[bool | Color | Ray]:
         scatter_direction = rec.normal + random_unit_vector()
         if near_zero(scatter_direction):
             scatter_direction = rec.normal
-        return True, self.albedo, Ray(rec.p, scatter_direction, r_in.time())
+        return True, self.tex.value(rec.u, rec.v, rec.p), Ray(rec.p, scatter_direction, r_in.time())
 
 
 class Metal(Material):

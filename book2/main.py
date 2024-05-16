@@ -1,3 +1,4 @@
+from tex import CheckerTexture
 from bvh import BVHNode
 from utils import random_float, random_vector
 from camera import Camera
@@ -14,8 +15,10 @@ if __name__ == '__main__':
 
     samples_per_pixel = 100
 
+    checker = CheckerTexture(0.32, c1=Color(0.2, 0.3, 0.1), c2=Color(0.9, 0.9, 0.9))
+
     material_ground = Lambertian(Color(0.2, 0.8, 0.8))
-    material_center = Lambertian(Color(0.1, 0.2, 0.5))
+    material_center = Lambertian(texture=checker)
     material_red = Lambertian(Color(0.8, 0.2, 0.2))
     material_green = Lambertian(Color(0.2, 0.8, 0.2))
     material_yellow = Lambertian(Color(0.8, 0.8, 0.2))
@@ -31,6 +34,6 @@ if __name__ == '__main__':
     world = World(BVHNode(world=world))
 
     cam = Camera(aspect_ratio, image_width, samples_per_pixel, 50, 20, Point3(-2, 2, 1), Point3(0, 0, -1), Vector3(0, 1, 0))
-    cam.render(world, open("output2.ppm", "w"))
+    cam.render(world, open("output3.ppm", "w"))
 
     
