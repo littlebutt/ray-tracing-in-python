@@ -1,4 +1,6 @@
 from math import floor
+from interval import Interval
+from image import TextureImage
 from vec import Point3, Color
 
 
@@ -37,10 +39,27 @@ class CheckerTexture(Texture):
         else:
             raise RuntimeError("Bad Initializing")
     
-    def value(self, u: float, v: float, p: Point3) -> Point3:
+    def value(self, u: float, v: float, p: "Point3") -> "Color":
         x_int = floor(self.inv_scale * p.x)
         y_int = floor(self.inv_scale * p.y)
         z_int = floor(self.inv_scale * p.z)
 
         is_even = (x_int + y_int + z_int) % 2 == 0
         return self.even.value(u, v, p) if is_even else self.odd.value(u, v, p)
+
+
+class ImageTexture(Texture):
+
+    def __init__(self, filename: str) -> None:
+        self.image = TextureImage(filename=filename)
+    
+    def value(self, u: float, v: float, p: "Point3") -> "Color":
+        if self.image.image_height < 0:
+            return Color(0, 1, 1)
+        u = Interval(0, 1).clamp(u)
+        v = 1.0 - Interval(0, 1).clamp(v)
+        i = int(u * self.image.image_width)
+        j = int(v * self.image.image_height)
+        pixel = self.image.pixel_data(i, j)
+        color_scale = 1.0 / 255
+        return Color(color_scale * pixel[0], color_scale * pixel[1], color_scale * pixel[2])

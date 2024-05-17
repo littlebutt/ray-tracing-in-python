@@ -1,6 +1,7 @@
-import math
+from math import acos, atan2, sqrt
 from typing import Optional, Tuple
 from aabb import AABB
+from constants import PI
 from hittable import HitRecord, Hittable
 from interval import Interval
 from material import Material
@@ -45,6 +46,12 @@ class Sphere(Hittable):
         # t=0 yields center, and t=1 yields center2.
         return self.center1 + time * self.center_vec
     
+    def get_sphere_uv(self, p: "Point3", rec: "HitRecord"):
+        theta = acos(-p.y)
+        phi = atan2(-p.z, p.x) + PI
+        rec.u = phi / (2 * PI)
+        rec.v = theta / PI
+    
     def hit(self, ray: Ray, interval: "Interval") -> Tuple[bool, Optional[HitRecord]]:
         '''
         Detect if the ray can hit the sphere within the given :class:`Interval`.
@@ -69,7 +76,7 @@ class Sphere(Hittable):
         if discriminant < 0:
             return (False, None)
         
-        sqrtd = math.sqrt(discriminant)
+        sqrtd = sqrt(discriminant)
         root = (-half_b - sqrtd) / a
         if not interval.surrounds(root):
             root = (-half_b + sqrtd) / a
@@ -81,6 +88,7 @@ class Sphere(Hittable):
         rec.p = ray.at(rec.t)
         outward_normal = (rec.p - self.center) / self.radius
         rec.set_face_normal(ray=ray, outward_normal=outward_normal)
+        self.get_sphere_uv(outward_normal, rec)
         rec.mat = self.mat
 
         return (True, rec)
