@@ -6,9 +6,9 @@ from vec import Color
 class TextureImage:
 
     def __init__(self, filename: str) -> None:
-        self.load(filename)
+        self._load(filename)
     
-    def load(self, filename: str) -> None:
+    def _load(self, filename: str) -> None:
         image = Image.open(filename)
         self.image_height = image.height
         self.image_width = image.width

@@ -1,4 +1,5 @@
 from math import floor
+from perlin import Perlin
 from interval import Interval
 from image import TextureImage
 from vec import Point3, Color
@@ -63,3 +64,9 @@ class ImageTexture(Texture):
         pixel = self.image.pixel_data(i, j)
         color_scale = 1.0 / 255
         return Color(color_scale * pixel[0], color_scale * pixel[1], color_scale * pixel[2])
+
+
+class NoiseTexture(Texture):
+    def value(self, u: float, v: float, p: "Point3") -> "Color":
+        noise = Perlin()
+        return Color(1, 1, 1) * noise.noise(p=p)
