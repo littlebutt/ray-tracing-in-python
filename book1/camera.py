@@ -13,7 +13,7 @@ __all__ = ['Camera']
 
 class Camera:
     '''
-    :class:`Camera` provides the APIs for rendering the graphic with the given 
+    :class:`Camera` provides the APIs for rendering the graphic with the given
     arguments.
 
     Attributes:
@@ -35,9 +35,11 @@ class Camera:
 
     '''
 
-    def __init__(self, aspect_ratio: float=1.0, image_width: float=100, 
-                 samples_per_pixel: float=10, max_depth: int=10, 
-                 vfov: float=90, look_from: "Point3"=Point3(0, 0, 0), look_at: "Point3"=Point3(0, 0, -1), vup: "Vector3"=Vector3(0, 1, 0)) -> None:
+    def __init__(self, aspect_ratio: float = 1.0, image_width: float = 100,
+                 samples_per_pixel: float = 10, max_depth: int = 10,
+                 vfov: float = 90, look_from: "Point3" = Point3(0, 0, 0),
+                 look_at: "Point3" = Point3(0, 0, -1),
+                 vup: "Vector3" = Vector3(0, 1, 0)) -> None:
         self.aspect_ratio = aspect_ratio
         self.image_width = image_width
         self.samples_per_pixel = samples_per_pixel
@@ -46,7 +48,7 @@ class Camera:
         self.look_from = look_from
         self.look_at = look_at
         self.vup = vup
-    
+
     def render(self, world: "World", out: TextIO):
         '''
         Render the image of the ray tracing model.
@@ -58,21 +60,24 @@ class Camera:
             out: The :type:`TextIO` output stream.
         '''
         self._initialize()
-        print(f"Start to render the image. The total batch number is {self.image_height * self.image_width}")
+        print(f"Start to render the image. The total batch number is "
+              f"{self.image_height * self.image_width}")
         out.write(f"P3\n{self.image_width} {self.image_height}\n255\n")
         for j in range(self.image_height):
             for i in range(self.image_width):
                 pixel_color = Color(0, 0, 0)
-                print(f"Rendering the {i + j * self.image_height}/{self.image_height * self.image_width} batch")
+                print(f"Rendering the {i + j * self.image_height}"
+                      "/{self.image_height * self.image_width} batch")
                 for sample in range(0, self.samples_per_pixel):
                     r = self._get_ray(i, j)
                     pixel_color += self._ray_color(r, self.max_depth, world)
-                write_color(out, self.pixel_samples_scale  * pixel_color)
+                write_color(out, self.pixel_samples_scale * pixel_color)
         out.flush()
-    
+
     def _get_ray(self, i: int, j: int) -> "Ray":
         offset = self._sample_square()
-        pixel_sample = self.pixel00_loc + ((i + offset.x) * self.pixel_delta_u) + ((j + offset.y) * self.pixel_delta_v)
+        pixel_sample = self.pixel00_loc + ((i + offset.x) * self.pixel_delta_u)
+        + ((j + offset.y) * self.pixel_delta_v)
         ray_origin = self.center
         ray_direction = pixel_sample - ray_origin
         return Ray(ray_origin, ray_direction)
@@ -88,7 +93,8 @@ class Camera:
         theta = degrees_to_radians(self.vfov)
         h = tan(theta / 2)
         self.viewport_height = 2.0 * h * self.focal_length
-        self.viewport_width = self.viewport_height * float(self.image_width / self.image_height)
+        self.viewport_width = self.viewport_height * \
+            float(self.image_width / self.image_height)
 
         self.center = self.look_from
 
@@ -102,9 +108,11 @@ class Camera:
         self.pixel_delta_u = self.viewport_u / self.image_width
         self.pixel_delta_v = self.viewport_v / self.image_height
 
-        self.viewport_upper_left = self.center - self.focal_length * w - self.viewport_u / 2 - self.viewport_v / 2
+        self.viewport_upper_left = self.center - self.focal_length * w - \
+            self.viewport_u / 2 - self.viewport_v / 2
 
-        self.pixel00_loc = self.viewport_upper_left + 0.5 * (self.pixel_delta_u + self.pixel_delta_v)
+        self.pixel00_loc = self.viewport_upper_left + 0.5 * \
+            (self.pixel_delta_u + self.pixel_delta_v)
 
         self.pixel_samples_scale = 1.0 / self.samples_per_pixel
 
@@ -116,7 +124,8 @@ class Camera:
         if hit:
             res, attenuation, scattered = rec.mat.scatter(ray, rec)
             if res:
-                return attenuation * self._ray_color(scattered, depth - 1, world)
+                return attenuation * \
+                    self._ray_color(scattered, depth - 1, world)
             return Color(0, 0, 0)
         unit_direction = ray.direction().unit_vector()
         a = 0.5 * (unit_direction.y + 1.0)

@@ -16,14 +16,15 @@ class World(Hittable):
 
     def __init__(self) -> None:
         self.objects: List["Hittable"] = list()
-    
+
     def add(self, obj: "Hittable") -> None:
         self.objects.append(obj)
-    
+
     def clear(self) -> None:
         self.objects.clear()
-    
-    def hit(self, ray: Ray, interval: "Interval") -> Tuple[bool, HitRecord | None]:
+
+    def hit(self, ray: Ray, interval: "Interval") -> \
+            Tuple[bool, HitRecord | None]:
         '''Detect if the objects in the world are hittable respectively.'''
         hit_anything = False
         return_rec = None
@@ -35,6 +36,5 @@ class World(Hittable):
                 hit_anything = True
                 closest_so_far = rec.t
                 return_rec = rec
-        
-        return (hit_anything, return_rec)
 
+        return (hit_anything, return_rec)

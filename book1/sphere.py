@@ -21,14 +21,17 @@ class Sphere(Hittable):
 
     '''
 
-    def __init__(self, center: "Point3", radius: float, mat: "Material"=Material()) -> None:
+    def __init__(self, center: "Point3", radius: float,
+                 mat: "Material" = Material()) -> None:
         self.center = center
         self.radius = radius
         self.mat = mat
-    
-    def hit(self, ray: Ray, interval: "Interval") -> Tuple[bool, Optional[HitRecord]]:
+
+    def hit(self, ray: Ray, interval: "Interval") -> \
+            Tuple[bool, Optional[HitRecord]]:
         '''
-        Detect if the ray can hit the sphere within the given :class:`Interval`.
+        Detect if the ray can hit the sphere within the given
+        :class:`Interval`.
 
         Args:
             ray: The ray for detecting if it is hittable.
@@ -36,9 +39,9 @@ class Sphere(Hittable):
 
         Returns:
             :type:`bool`: If the ray can hit the sphere.
-            :class:`HitRecord`: The :class:`HitRecord` of the hit detection if 
+            :class:`HitRecord`: The :class:`HitRecord` of the hit detection if
                 the ray can hit the sphere.
-        
+
         '''
         oc = ray.origin() - self.center
         a = ray.direction().length_squared()
@@ -48,14 +51,14 @@ class Sphere(Hittable):
 
         if discriminant < 0:
             return (False, None)
-        
+
         sqrtd = math.sqrt(discriminant)
         root = (-half_b - sqrtd) / a
         if not interval.surrounds(root):
             root = (-half_b + sqrtd) / a
             if not interval.surrounds(root):
                 return (False, None)
-        
+
         rec = HitRecord()
         rec.t = root
         rec.p = ray.at(rec.t)
