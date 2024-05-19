@@ -1,9 +1,4 @@
 [flake8]
 exclude = 
-    .git,
-    .gitignore,
-    book1/__pycache__,
     *.ppm,
     book2,
-    LICENSE,
-    README.md
