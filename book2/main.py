@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     checker = CheckerTexture(0.32, c1=Color(0.2, 0.3, 0.1), c2=Color(0.9, 0.9, 0.9))
     earth = ImageTexture(filename="earthmap.jpg")
-    perlin = NoiseTexture()
+    perlin = NoiseTexture(4)
 
     material_ground = Lambertian(Color(0.2, 0.8, 0.8))
     material_checker = Lambertian(texture=checker)

@@ -67,6 +67,10 @@ class ImageTexture(Texture):
 
 
 class NoiseTexture(Texture):
+
+    def __init__(self, scale: float = 1) -> None:
+        self.scale = scale
+
     def value(self, u: float, v: float, p: "Point3") -> "Color":
         noise = Perlin()
-        return Color(1, 1, 1) * noise.noise(p=p)
+        return Color(1, 1, 1) * noise.turb(p, 7)
