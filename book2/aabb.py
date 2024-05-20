@@ -28,6 +28,7 @@ class AABB:
             self.z = Interval(a=box0.z, b=box1.z)
         else:
             raise RuntimeError("Bad Initializing")
+        self._pad_to_minimums()
     
     def axis_interval(self, n: int) -> "Interval":
         match n:
@@ -72,4 +73,12 @@ class AABB:
             return 0 if self.x.size() > self.z.size() else 2
         else:
             return 1 if self.y.size() > self.z.size() else 2
-            
+
+    def _pad_to_minimums(self) -> None:
+        delta = 0.0001
+        if self.x.size() < delta:
+            self.x = self.x.expand(delta)
+        if self.y.size() < delta:
+            self.y = self.y.expand(delta)
+        if self.z.size() < delta:
+            self.z = self.z.expand(delta)
