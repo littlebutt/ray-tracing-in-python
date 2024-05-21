@@ -1,3 +1,4 @@
+from quad import Quad
 from tex import CheckerTexture, ImageTexture, NoiseTexture
 from bvh import BVHNode
 from utils import random_float
@@ -27,11 +28,11 @@ if __name__ == '__main__':
     world = World()
     world.add(Sphere(Point3(0.0, -100.5, -1.0), 100.0, material_ground))
     center = Point3(0.0, 0.0, -1.2) + Vector3(0, random_float(0, 0.1), 0)
-    world.add(Sphere(Point3(0.0, 0.001, -1.2), 0.5, material_perlin))
+    world.add(Quad(Point3(-3, -2, 5), Vector3(0, 0, -4), Vector3(0, 4, 0), Lambertian(Color(1, 0.2, 0.2))))
 
     world = World(BVHNode(world=world))
 
-    cam = Camera(aspect_ratio, image_width, samples_per_pixel, 50, 20, Point3(-2, 2, 1), Point3(0, 0, -1), Vector3(0, 1, 0))
-    cam.render(world, open("output5.ppm", "w"))
+    cam = Camera(1.0, image_width, samples_per_pixel, 50, 80, Point3(-0, 0, 9), Point3(0, 0, 0), Vector3(0, 1, 0))
+    cam.render(world, open("output6.ppm", "w"))
 
     
