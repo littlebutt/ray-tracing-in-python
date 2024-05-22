@@ -4,7 +4,7 @@ from tex import SolidColor, Texture
 from hittable import HitRecord
 from ray import Ray
 from utils import near_zero, random_float, random_unit_vector
-from vec import Color, Vector3
+from vec import Color, Point3, Vector3
 
 
 __all__ = ['Material', 'Lambertian', 'Metal', 'Dielectric']
@@ -30,7 +30,10 @@ class Material:
             Color: The color of the scattered ray.
             Ray: The scattered ray.
         '''
-        return False
+        return False, None, None
+    
+    def emitted(self, u: float, v: float, p: "Point3") -> "Color":
+        return Color(0, 0, 0)
     
     def _reflect(self, v: "Vector3", n: "Vector3") -> "Vector3":
         return v - 2 * v.dot(n) * n
@@ -90,4 +93,17 @@ class Dielectric(Material):
         r0 = (1 - refraction_index) / (1 + refraction_index)
         r0 = r0 * r0
         return r0 + (1 - r0) * pow((1 - cosine), 5)
-    
+
+
+class DiffuseLight(Material):
+
+    def __init__(self, tex: "Texture" = None, emit: "Color" = None) -> None:
+        if tex is not None:
+            self.tex = tex
+        elif emit is not None:
+            self.tex = SolidColor(albedo=emit)
+        else:
+            raise RuntimeError("Bad Initializing")
+
+    def emitted(self, u: float, v: float, p: Color) -> Color:
+        return self.tex.value(u, v, p)
