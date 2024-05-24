@@ -7,7 +7,7 @@ class TextureImage:
 
     def __init__(self, filename: str) -> None:
         self._load(filename)
-    
+
     def _load(self, filename: str) -> None:
         image = Image.open(filename)
         self.image_height = image.height

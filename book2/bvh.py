@@ -9,20 +9,40 @@ from hittable import Hittable
 
 
 class BVHNode(Hittable):
+    '''
+    A bounding volume hierarchy, or BVH, is a container for hittable objects.
+    Unlike :class:`World`, the main idea of BVH is to arrange :class:`BVHNode`
+    in a binary tree. The node is considered :meth:`hit` if its left child
+    ``or`` right child is hit.
 
-    def __init__(self, objects: List["Hittable"]=list(), start: int=0, end: int=0,
-                 world: "World"=None) -> None:
+    Attributes:
+        objects: A list of objects to be rendered.
+        start: The start index.
+        end: The end index. Both :args:`start` and :args:`end` are used in
+            sorting.
+        world: The :class:`World` object, which is for the  initialization of
+            the BVH tree.
+
+    '''
+    def __init__(self,
+                 objects: List["Hittable"] = list(),
+                 start: int = 0,
+                 end: int = 0,
+                 world: "World" = None) -> None:
         if world is not None:
             objects = world.objects
             start = 0
             end = len(objects)
-        
+
         self.bbox = AABB(x=EMPTY, y=EMPTY, z=EMPTY)
         for object_index in range(start, end):
-            self.bbox = AABB(box0=self.bbox, box1=objects[object_index].bounding_box())
-        
+            self.bbox = AABB(box0=self.bbox,
+                             box1=objects[object_index].bounding_box())
+
         axis = self.bbox.longest_axis()
-        comparator = self.box_x_compare if axis == 0 else self.box_y_compare if axis == 1 else self.box_z_compare
+        comparator = self.box_x_compare \
+            if axis == 0 else self.box_y_compare \
+            if axis == 1 else self.box_z_compare
         object_span = end - start
         if object_span == 1:
             self.left = objects[start]
@@ -31,30 +51,35 @@ class BVHNode(Hittable):
             self.left = objects[start]
             self.right = objects[start + 1]
         else:
-            objects[start:end] = sorted(objects[start:end], key=functools.cmp_to_key(comparator))
+            objects[start:end] = sorted(objects[start:end],
+                                        key=functools.cmp_to_key(comparator))
             mid = int(start + object_span / 2)
             self.left = BVHNode(objects=objects, start=start, end=mid)
             self.right = BVHNode(objects=objects, start=mid, end=end)
-    
+
     @staticmethod
     def box_x_compare(a: "Hittable", b: "Hittable") -> bool:
         a_axis_interval = a.bounding_box().axis_interval(0)
         b_axis_interval = b.bounding_box().axis_interval(0)
         return a_axis_interval.min - b_axis_interval.min
-    
+
     @staticmethod
     def box_y_compare(a: "Hittable", b: "Hittable") -> bool:
         a_axis_interval = a.bounding_box().axis_interval(1)
         b_axis_interval = b.bounding_box().axis_interval(1)
         return a_axis_interval.min - b_axis_interval.min
-    
+
     @staticmethod
     def box_z_compare(a: "Hittable", b: "Hittable") -> bool:
         a_axis_interval = a.bounding_box().axis_interval(2)
         b_axis_interval = b.bounding_box().axis_interval(2)
         return a_axis_interval.min - b_axis_interval.min
 
-    def hit(self, ray: Ray, interval: Interval) -> Tuple[bool, Optional["HitRecord"]]:
+    def hit(self, ray: Ray, interval: Interval) -> \
+            Tuple[bool, Optional["HitRecord"]]:
+        '''
+        Test if the :class:`BVHNode` can be hit.
+        '''
         if not self.bbox.hit(ray, interval):
             return False, None
         hit_left, rec_left = self.left.hit(ray, interval)
@@ -70,6 +95,6 @@ class BVHNode(Hittable):
             return True, rec_right
         else:
             return False, None
-    
+
     def bounding_box(self) -> "AABB":
         return self.bbox

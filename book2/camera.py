@@ -31,7 +31,8 @@ class Camera:
         look_from: Point camera is looking from.
         look_at: Point camera is looking at.
         vup: Camera-relative "up" direction.
-
+        background: The background color of the image when we do diffuse light
+            rendering.
 
     '''
 
