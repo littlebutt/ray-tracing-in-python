@@ -58,11 +58,12 @@ class Quad(Hittable):
         rec.set_face_normal(ray, self.normal)
 
         return True, rec
-    
+
     @staticmethod
     def _is_interior(alpha: float, beta: float) -> Tuple[bool, "HitRecord"]:
         unit_interval = Interval(0, 1)
-        if (not unit_interval.contains(alpha)) or (not unit_interval.contains(beta)):
+        if (not unit_interval.contains(alpha)) or \
+                (not unit_interval.contains(beta)):
             return False, None
         rec = HitRecord()
         rec.u = alpha
