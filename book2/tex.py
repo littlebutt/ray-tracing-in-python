@@ -5,6 +5,10 @@ from image import TextureImage
 from vec import Point3, Color
 
 
+__all__ = ["Texture", "SolidColor", "CheckerTexture", "ImageTexture",
+           "NoiseTexture"]
+
+
 class Texture:
 
     def value(self, u: float, v: float, p: "Point3") -> "Color":

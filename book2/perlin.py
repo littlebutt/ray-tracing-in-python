@@ -5,6 +5,9 @@ from vec import Point3, Vector3
 from utils import random_vector
 
 
+__all__ = ["Perlin"]
+
+
 class Perlin:
     '''
     A class for helping :class:`NoiseTexture`.

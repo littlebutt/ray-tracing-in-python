@@ -9,7 +9,24 @@ from vec import Point3, Vector3
 from hittable import Hittable
 
 
+__all__ = ["Quad"]
+
+
 class Quad(Hittable):
+    '''
+    The hittable quadrilateral shape.
+
+    Attributes:
+        q: The 'origin' of a quadrilateral.
+        u: The vector along one side of the quadrilateral.
+        v: The vector along the other side of the quadrilateral.
+        mat: The material.
+        normal: The normal vector of the quadrilateral.
+        d: The D value of the quadrilateral since a quadrilateral can be noted
+            as Ax + By + Cz = D, or n * v = D.
+        w: The w value of the quadrilateral, usually is n / (n * n).
+
+    '''
 
     def __init__(self, q: "Point3", u: "Vector3", v: "Vector3",
                  mat: "Material" = Material()) -> None:
@@ -36,6 +53,7 @@ class Quad(Hittable):
 
     def hit(self, ray: Ray, interval: Interval) -> \
             Tuple[bool, HitRecord | None]:
+        ''' The hit method from :class:`Hittable`. '''
         denom = self.normal.dot(ray.direction())
         if fabs(denom) < 1e-8:
             return False, None
