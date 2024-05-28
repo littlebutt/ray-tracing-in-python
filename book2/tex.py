@@ -10,13 +10,30 @@ __all__ = ["Texture", "SolidColor", "CheckerTexture", "ImageTexture",
 
 
 class Texture:
-
     def value(self, u: float, v: float, p: "Point3") -> "Color":
+        '''
+        Get the color value with the given uv pair or hit point position.
+
+        Args:
+            u: The u value of the uv pair, usually for find the pixel from the
+                texture image.
+            v: The v value of the uv pair.
+            p: The hit point.
+
+        Returns:
+            Color: The texture color for rendering.
+
+        '''
         pass
 
 
 class SolidColor(Texture):
+    '''
+    The texture for rendering the pure color.
 
+    Attributes:
+
+    '''
     def __init__(self, albedo: "Color"=None, red: float=0, green: float=0, blue: float=0) -> None:
         if albedo is not None:
             self.albedo = albedo
