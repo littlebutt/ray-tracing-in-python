@@ -23,8 +23,11 @@ class Sphere(Hittable):
 
     '''
 
-    def __init__(self, center1: "Point3", radius: float, mat: "Material"=Material(), 
-                center2: Optional["Point3"]=None) -> None:
+    def __init__(self,
+                 center1: "Point3",
+                 radius: float,
+                 mat: "Material" = Material(),
+                 center2: Optional["Point3"] = None) -> None:
         self.center1 = center1
         self.radius = radius
         self.mat = mat
@@ -40,21 +43,23 @@ class Sphere(Hittable):
         else:
             self.is_moving = False
             self.bbox = AABB(a=center1 - rvec, b=center1 + rvec)
-    
+
     def sphere_center(self, time: float) -> "Point3":
-        # Linearly interpolate from center to center2 according to time, where 
+        # Linearly interpolate from center to center2 according to time, where
         # t=0 yields center, and t=1 yields center2.
         return self.center1 + time * self.center_vec
-    
+
     def get_sphere_uv(self, p: "Point3", rec: "HitRecord"):
         theta = acos(-p.y)
         phi = atan2(-p.z, p.x) + PI
         rec.u = phi / (2 * PI)
         rec.v = theta / PI
-    
-    def hit(self, ray: Ray, interval: "Interval") -> Tuple[bool, Optional[HitRecord]]:
+
+    def hit(self, ray: Ray, interval: "Interval") -> \
+            Tuple[bool, Optional[HitRecord]]:
         '''
-        Detect if the ray can hit the sphere within the given :class:`Interval`.
+        Detect if the ray can hit the sphere within the given
+        :class:`Interval`.
 
         Args:
             ray: The ray for detecting if it is hittable.
@@ -62,11 +67,12 @@ class Sphere(Hittable):
 
         Returns:
             :type:`bool`: If the ray can hit the sphere.
-            :class:`HitRecord`: The :class:`HitRecord` of the hit detection if 
+            :class:`HitRecord`: The :class:`HitRecord` of the hit detection if
                 the ray can hit the sphere.
-        
+
         '''
-        self.center = self.sphere_center(ray.time()) if self.is_moving else self.center1
+        self.center = self.sphere_center(ray.time()) \
+            if self.is_moving else self.center1
         oc = ray.origin() - self.center
         a = ray.direction().length_squared()
         half_b = oc.dot(ray.direction())
@@ -75,14 +81,14 @@ class Sphere(Hittable):
 
         if discriminant < 0:
             return (False, None)
-        
+
         sqrtd = sqrt(discriminant)
         root = (-half_b - sqrtd) / a
         if not interval.surrounds(root):
             root = (-half_b + sqrtd) / a
             if not interval.surrounds(root):
                 return (False, None)
-        
+
         rec = HitRecord()
         rec.t = root
         rec.p = ray.at(rec.t)
@@ -92,6 +98,6 @@ class Sphere(Hittable):
         rec.mat = self.mat
 
         return (True, rec)
-    
+
     def bounding_box(self) -> AABB:
         return self.bbox
