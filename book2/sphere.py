@@ -17,9 +17,15 @@ class Sphere(Hittable):
     The sphere object for rendering.
 
     Attributes:
-        center: The center of the sphere.
+        center1: The center of the sphere.
         radius: The radius of the sphere.
         mat: The material of the sphere.
+        center2: The other center of the sphere if it is bouncing at the
+            highest point.
+        is_moving: True if the sphere is moving. In this case :arg:`center2`
+            is provided.
+        center_vec: The vector pointing from :arg:`center1` to :arg:`center2`.
+        bbox: The bounding box of the sphere.
 
     '''
 
@@ -45,11 +51,19 @@ class Sphere(Hittable):
             self.bbox = AABB(a=center1 - rvec, b=center1 + rvec)
 
     def sphere_center(self, time: float) -> "Point3":
+        '''
+        Return the center of the sphere according to the given :arg:`time`.
+
+        '''
         # Linearly interpolate from center to center2 according to time, where
         # t=0 yields center, and t=1 yields center2.
         return self.center1 + time * self.center_vec
 
     def get_sphere_uv(self, p: "Point3", rec: "HitRecord"):
+        '''
+        Calculate the u and v pair for the texture.
+
+        '''
         theta = acos(-p.y)
         phi = atan2(-p.z, p.x) + PI
         rec.u = phi / (2 * PI)
@@ -73,6 +87,7 @@ class Sphere(Hittable):
         '''
         self.center = self.sphere_center(ray.time()) \
             if self.is_moving else self.center1
+
         oc = ray.origin() - self.center
         a = ray.direction().length_squared()
         half_b = oc.dot(ray.direction())
