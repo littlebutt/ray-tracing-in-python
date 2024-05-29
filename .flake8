@@ -1,4 +1,2 @@
 [flake8]
-exclude = 
-    *.ppm,
-    book2,
+exclude = *.ppm,

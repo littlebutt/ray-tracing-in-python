@@ -10,28 +10,35 @@ def degrees_to_radians(degrees: float):
     return degrees * PI / 180.0
 
 
-def random_float(min: float=0, max: float=1) -> float:
+def random_float(min: float = 0, max: float = 1) -> float:
+    ''' Return a random float. '''
     return min + random.random() * (max - min)
 
 
-def random_vector(min: float=0, max: float=1) -> "Vector3":
-    return Vector3(random_float(min, max), random_float(min, max), random_float(min, max))
-       
+def random_vector(min: float = 0, max: float = 1) -> "Vector3":
+    ''' Return a random vector. '''
+    return Vector3(random_float(min, max),
+                   random_float(min, max),
+                   random_float(min, max))
+
 
 def random_unit_vector() -> "Vector3":
+    ''' Return a random unit vector. '''
     while True:
         p = random_vector(-1, 1)
         if p.length_squared() < 1:
             return p.unit_vector()
-    
+
 
 def linear_to_gamma(linear_component: float) -> float:
+    ''' Change linear space to gamma space. '''
     if linear_component > 0:
         return sqrt(linear_component)
     return 0
 
 
 def near_zero(vector: "Vector3") -> bool:
+    ''' Find if the vector is zero vector. '''
     s = 1e-8
     return abs(vector.x) < s and abs(vector.y) < s and abs(vector.z) < s
 
